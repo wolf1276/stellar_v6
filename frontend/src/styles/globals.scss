@@ -1,47 +1,91 @@
-// Antigravity UI System - Liquid Glass & Motion Hierarchy
+// Antigravity UI System v2.0 - Production Grade Clean UI
 // Focus on depth, transparency, and premium performance
 
 :root {
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-edge: rgba(255, 255, 255, 0.2);
+  // Core Colors
+  --c-primary: #6366f1;
+  --c-primary-hover: #4f46e5;
+  --c-success: #10b981;
+  --c-danger: #ef4444;
+  --c-warning: #f59e0b;
+  --c-info: #0ea5e9;
+  
+  // Neutral Tones
+  --c-white: #ffffff;
+  --c-black: #000000;
+  --c-slate-50: #f8fafc;
+  --c-slate-200: #e2e8f0;
+  --c-slate-400: #94a3b8;
+  --c-slate-700: #334155;
+  --c-slate-800: #1e293b;
+  --c-slate-900: #0f172a;
+
+  // Semantic
+  --c-text-base: var(--c-slate-900);
+  --c-text-muted: var(--c-slate-400);
+  --c-bkg-body: var(--c-slate-50);
+  
+  // Glass Tokens
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-edge: rgba(255, 255, 255, 0.6);
   --glass-shadow: 
     0 4px 6px -1px rgba(0, 0, 0, 0.1), 
     0 2px 4px -1px rgba(0, 0, 0, 0.06),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   --glass-blur: blur(24px);
-  --motion-lift: translateY(-8px);
-  --motion-scale: scale(1.01);
-  --transition-premium: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   
-  // Depth Layers
-  --depth-flat: 0 1px 3px rgba(0,0,0,0.1);
-  --depth-low: 0 4px 12px rgba(0,0,0,0.15);
-  --depth-mid: 0 12px 32px rgba(0,0,0,0.25);
-  --depth-high: 0 32px 64px rgba(0,0,0,0.35);
+  // Motion & Depth
+  --motion-lift: translateY(-8px);
+  --transition-premium: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --depth-low: 0 4px 12px rgba(0,0,0,0.05);
+  --depth-mid: 0 12px 32px rgba(0,0,0,0.1);
+  --depth-high: 0 32px 64px rgba(0,0,0,0.15);
 }
 
 [data-theme="dark"] {
+  --c-text-base: #f1f5f9;
+  --c-text-muted: #94a3b8;
+  --c-bkg-body: #020617;
+  
   --glass-bg: rgba(15, 23, 42, 0.4);
-  --glass-border: rgba(255, 255, 255, 0.05);
-  --glass-edge: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.03);
+  --glass-edge: rgba(255, 255, 255, 0.08);
   --glass-shadow: 
     0 10px 30px rgba(0, 0, 0, 0.5),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+// Reset & Base
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background-color: var(--c-bkg-body);
+  color: var(--c-text-base);
+  overflow-x: hidden;
+  transition: background-color 0.5s ease;
 }
 
 // 1. Structural Utilities
 .sie-dashboard {
   min-height: 100vh;
-  padding: 100px 40px 60px;
+  padding: 120px 40px 60px;
   background: 
-    radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
-    var(--c-bkg-body);
-  transition: background 0.8s ease;
+    radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
 }
 
-// 2. Glass Base Component (Liquid Glass Evolution)
+.max-w-1400 {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+// 2. Glass Cards
 .glass-card {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
@@ -51,16 +95,14 @@
   box-shadow: var(--glass-shadow);
   transition: var(--transition-premium);
   position: relative;
-  overflow: visible; // Allow shadows to breathe
 
-  // Inner glow / reflection
   &::before {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, var(--glass-edge), transparent 50%, transparent);
+    padding: 1.5px;
+    background: linear-gradient(135deg, var(--glass-edge), transparent 50%);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
@@ -72,217 +114,145 @@
     transform: var(--motion-lift);
     border-color: var(--glass-edge);
     box-shadow: var(--depth-high);
-    background: rgba(255, 255, 255, 0.08);
   }
 }
 
-// 3. Topbar (Antigravity Floating Strip)
+// 3. Floating Navigation
 .header.glass-strip {
   position: fixed;
-  top: 24px;
+  top: 32px;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 80px);
-  max-width: 1320px;
+  width: calc(100% - 64px);
+  max-width: 1300px;
   height: 64px;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--glass-bg);
   backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--glass-border);
-  border-radius: 32px;
-  z-index: 1000;
+  border-radius: 40px;
+  z-index: 2000;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 32px;
   box-shadow: var(--depth-mid);
-  transition: var(--transition-premium);
 
-  &:hover {
-    box-shadow: var(--depth-high);
-    border-color: var(--glass-edge);
-  }
-  
   .logo-mark {
-    background: linear-gradient(135deg, var(--c-primary), #818cf8);
+    background: var(--c-primary);
     width: 32px;
     height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    border-radius: 10px;
     color: white;
     font-weight: 800;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
   }
 }
 
-// 4. KPI System
+// 4. Grid System
 .kpi-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
-.kpi-card {
-  padding: 32px;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  
-  .kpi-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--c-text-muted);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    
-    &::before {
-      content: '';
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: var(--c-primary);
-    }
-  }
-  
-  .kpi-value {
-    font-size: 40px;
-    font-weight: 800;
-    margin-bottom: 0;
-    letter-spacing: -0.02em;
-    background: linear-gradient(135deg, var(--c-text-base) 30%, var(--c-primary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-}
-
-// 5. Analytics Panel
 .analytics-panel {
   display: grid;
   grid-template-columns: 400px 1fr;
   gap: 24px;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
-// 6. Premium Inputs & Focus
+// 5. Typography
+.sie-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--c-primary);
+  opacity: 0.8;
+}
+
+.kpi-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-text-muted);
+  margin-bottom: 8px;
+}
+
+.kpi-value {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+// 6. Interactive Inputs
 .intent-glass-input {
-  background: rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.2);
   border: 1px solid var(--glass-border);
   color: var(--c-text-base);
   border-radius: 20px;
   padding: 24px;
-  font-size: 18px;
-  line-height: 1.6;
+  font-family: inherit;
+  font-size: 16px;
   width: 100%;
   transition: var(--transition-premium);
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-  
-  &::placeholder {
-    color: var(--c-text-light);
-    opacity: 0.5;
-  }
   
   &:focus {
     outline: none;
     border-color: var(--c-primary);
-    background: rgba(0, 0, 0, 0.25);
-    box-shadow: 
-      inset 0 2px 4px rgba(0,0,0,0.2),
-      0 0 0 4px rgba(99, 102, 241, 0.1);
-    transform: translateY(-2px);
+    background: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
   }
 }
 
-// 7. Buttons (Premium Lift)
-.btn {
-  &.btn-lg {
-    padding: 14px 28px;
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-radius: 16px;
-    transition: var(--transition-premium);
-    overflow: hidden;
-    position: relative;
-    
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: 0.5s;
-    }
-    
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
-      
-      &::after {
-        left: 100%;
-      }
-    }
-    
-    &:active {
-      transform: translateY(-1px);
-    }
-  }
+// 7. Utility Classes
+.jc-sb { justify-content: space-between; }
+.ai-c { align-items: center; }
+.jc-c { justify-content: center; }
+.d-flex { display: flex; }
+.flex-column { flex-direction: column; }
+.gap-4 { gap: 1rem; }
+.gap-3 { gap: 0.75rem; }
+.mt-4 { margin-top: 1.5rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.small { font-size: 0.875rem; }
+.fw-800 { font-weight: 800; }
+.fw-600 { font-weight: 600; }
 
-  &.btn-primary {
-    background: linear-gradient(135deg, var(--c-primary), #818cf8);
-    border: none;
+// Animations
+#loader {
+  position: fixed;
+  inset: 0;
+  background: var(--c-bkg-body);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease;
+  
+  &.fadeOut {
+    opacity: 0;
+    pointer-events: none;
   }
   
-  &.btn-success {
-    background: linear-gradient(135deg, var(--c-success), #34d399);
-    border: none;
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--c-primary);
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
   }
 }
 
-// 8. Interactive Engine Cards
-.is-main-engine {
-  background: linear-gradient(165deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-  border-width: 2px;
-  
-  .sie-section-label {
-    font-size: 12px;
-    margin-bottom: 24px;
-    color: var(--c-primary);
-    opacity: 1;
-  }
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-// 9. Badges & Status
-.sie-badge {
-  padding: 6px 16px;
-  border-radius: 30px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: var(--depth-low);
-}
-
-// Spacing Utilities
-.gap-20 { gap: 24px !important; }
-
-@media (max-width: 1200px) {
-  .sie-dashboard { padding: 100px 24px 40px; }
-  .header.glass-strip { width: calc(100% - 48px); }
-}
-
-@media (max-width: 991px) {
-  .analytics-panel { grid-template-columns: 1fr; }
-  .kpi-row { grid-template-columns: 1fr; }
+@media (max-width: 1024px) {
+  .analytics-panel, .kpi-row { grid-template-columns: 1fr; }
 }

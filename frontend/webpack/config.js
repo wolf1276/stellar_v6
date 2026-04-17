@@ -115,7 +115,7 @@ if (manifest.MINIFY) {
 // -----------------
 module.exports = {
   devtool: manifest.IS_PRODUCTION ? false : 'source-map',
-  context: path.join(manifest.paths.src, manifest.entries.js),
+  context: manifest.paths.src,
   // watch: !manifest.IS_PRODUCTION,
   entry,
   mode: manifest.NODE_ENV,

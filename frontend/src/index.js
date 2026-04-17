@@ -1,11 +1,10 @@
 /**
- * Adminator Admin Template
- * Modern Entry Point - Phase 2 Modernization
+ * Stellar Intent Engine (SIE)
+ * Unified Intelligence Dashboard
  */
 
 // Import the modern application
 import './app.js';
-import './dashboard/index.js';
 
 // Legacy imports that haven't been modernized yet
 // These will be gradually replaced in future iterations
