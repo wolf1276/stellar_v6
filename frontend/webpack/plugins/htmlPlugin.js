@@ -26,12 +26,12 @@ if (manifest.MINIFY) {
 }
 
 
-module.exports = Object.keys(titles).map(title => {
-  return new HtmlWebpackPlugin({
-    template: path.join(manifest.paths.src, `${title}.html`),
+module.exports = [
+  new HtmlWebpackPlugin({
+    template: path.join(manifest.paths.src, 'pages', 'dashboard.html'),
     path: manifest.paths.build,
-    filename: `${title}.html`,
+    filename: 'index.html',
     inject: true,
     minify,
-  });
-});
+  })
+];

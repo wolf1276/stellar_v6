@@ -30,7 +30,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 
 const
   entry = [
-    path.join(manifest.paths.src, 'assets', 'scripts', manifest.entries.js),
+    path.join(manifest.paths.src, manifest.entries.js),
   ];
 
 
@@ -46,9 +46,10 @@ const resolve = {
   ],
   alias: {
     '@': path.join(manifest.paths.src),
-    '@/components': path.join(manifest.paths.src, 'assets', 'scripts', 'components'),
-    '@/utils': path.join(manifest.paths.src, 'assets', 'scripts', 'utils'),
-    '@/constants': path.join(manifest.paths.src, 'assets', 'scripts', 'constants'),
+    '@comp': path.join(manifest.paths.src, 'components'),
+    '@utils': path.join(manifest.paths.src, 'utils'),
+    '@styles': path.join(manifest.paths.src, 'styles'),
+    '@dash': path.join(manifest.paths.src, 'dashboard'),
   },
 };
 

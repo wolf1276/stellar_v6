@@ -52,7 +52,7 @@ const loaders = [
         outputStyle: manifest.MINIFY ? 'compressed' : 'expanded',
         includePaths: [
           path.join('../../', 'node_modules'),
-          path.join(manifest.paths.src, 'assets', 'styles'),
+          path.join(manifest.paths.src, 'styles'),
           path.join(manifest.paths.src, ''),
         ],
         quietDeps: true,

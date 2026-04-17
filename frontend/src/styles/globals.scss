@@ -1,0 +1,288 @@
+// Antigravity UI System - Liquid Glass & Motion Hierarchy
+// Focus on depth, transparency, and premium performance
+
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-edge: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --glass-blur: blur(24px);
+  --motion-lift: translateY(-8px);
+  --motion-scale: scale(1.01);
+  --transition-premium: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  // Depth Layers
+  --depth-flat: 0 1px 3px rgba(0,0,0,0.1);
+  --depth-low: 0 4px 12px rgba(0,0,0,0.15);
+  --depth-mid: 0 12px 32px rgba(0,0,0,0.25);
+  --depth-high: 0 32px 64px rgba(0,0,0,0.35);
+}
+
+[data-theme="dark"] {
+  --glass-bg: rgba(15, 23, 42, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-edge: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+// 1. Structural Utilities
+.sie-dashboard {
+  min-height: 100vh;
+  padding: 100px 40px 60px;
+  background: 
+    radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
+    var(--c-bkg-body);
+  transition: background 0.8s ease;
+}
+
+// 2. Glass Base Component (Liquid Glass Evolution)
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: var(--glass-shadow);
+  transition: var(--transition-premium);
+  position: relative;
+  overflow: visible; // Allow shadows to breathe
+
+  // Inner glow / reflection
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, var(--glass-edge), transparent 50%, transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: var(--motion-lift);
+    border-color: var(--glass-edge);
+    box-shadow: var(--depth-high);
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+// 3. Topbar (Antigravity Floating Strip)
+.header.glass-strip {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 80px);
+  max-width: 1320px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 32px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  box-shadow: var(--depth-mid);
+  transition: var(--transition-premium);
+
+  &:hover {
+    box-shadow: var(--depth-high);
+    border-color: var(--glass-edge);
+  }
+  
+  .logo-mark {
+    background: linear-gradient(135deg, var(--c-primary), #818cf8);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  }
+}
+
+// 4. KPI System
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.kpi-card {
+  padding: 32px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--c-text-muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    &::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--c-primary);
+    }
+  }
+  
+  .kpi-value {
+    font-size: 40px;
+    font-weight: 800;
+    margin-bottom: 0;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--c-text-base) 30%, var(--c-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+// 5. Analytics Panel
+.analytics-panel {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+// 6. Premium Inputs & Focus
+.intent-glass-input {
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  color: var(--c-text-base);
+  border-radius: 20px;
+  padding: 24px;
+  font-size: 18px;
+  line-height: 1.6;
+  width: 100%;
+  transition: var(--transition-premium);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  
+  &::placeholder {
+    color: var(--c-text-light);
+    opacity: 0.5;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: var(--c-primary);
+    background: rgba(0, 0, 0, 0.25);
+    box-shadow: 
+      inset 0 2px 4px rgba(0,0,0,0.2),
+      0 0 0 4px rgba(99, 102, 241, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+// 7. Buttons (Premium Lift)
+.btn {
+  &.btn-lg {
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 16px;
+    transition: var(--transition-premium);
+    overflow: hidden;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: 0.5s;
+    }
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+      
+      &::after {
+        left: 100%;
+      }
+    }
+    
+    &:active {
+      transform: translateY(-1px);
+    }
+  }
+
+  &.btn-primary {
+    background: linear-gradient(135deg, var(--c-primary), #818cf8);
+    border: none;
+  }
+  
+  &.btn-success {
+    background: linear-gradient(135deg, var(--c-success), #34d399);
+    border: none;
+  }
+}
+
+// 8. Interactive Engine Cards
+.is-main-engine {
+  background: linear-gradient(165deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+  border-width: 2px;
+  
+  .sie-section-label {
+    font-size: 12px;
+    margin-bottom: 24px;
+    color: var(--c-primary);
+    opacity: 1;
+  }
+}
+
+// 9. Badges & Status
+.sie-badge {
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: var(--depth-low);
+}
+
+// Spacing Utilities
+.gap-20 { gap: 24px !important; }
+
+@media (max-width: 1200px) {
+  .sie-dashboard { padding: 100px 24px 40px; }
+  .header.glass-strip { width: calc(100% - 48px); }
+}
+
+@media (max-width: 991px) {
+  .analytics-panel { grid-template-columns: 1fr; }
+  .kpi-row { grid-template-columns: 1fr; }
+}
