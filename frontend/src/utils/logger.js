@@ -1,5 +1,5 @@
 /**
- * Adminator Logger Utility
+ * SIE Logger Utility
  * Development-only logging utility for debugging
  *
  * @module utils/logger
@@ -31,7 +31,7 @@ const Logger = {
    */
   info(message, context) {
     if (isDev()) {
-      console.info(`[Adminator] ${message}`, context || '');
+      console.info(`[SIE] ${message}`, context || '');
     }
   },
 
@@ -42,7 +42,7 @@ const Logger = {
    */
   warn(message, context) {
     if (isDev()) {
-      console.warn(`[Adminator] ${message}`, context || '');
+      console.warn(`[SIE] ${message}`, context || '');
     }
   },
 
@@ -53,7 +53,7 @@ const Logger = {
    */
   error(message, context) {
     if (isDev()) {
-      console.error(`[Adminator] ${message}`, context || '');
+      console.error(`[SIE] ${message}`, context || '');
     }
   },
 
@@ -64,7 +64,7 @@ const Logger = {
    */
   debug(message, context) {
     if (isDev()) {
-      console.debug(`[Adminator] ${message}`, context || '');
+      console.debug(`[SIE] ${message}`, context || '');
     }
   },
 
@@ -74,7 +74,7 @@ const Logger = {
    */
   group(label) {
     if (isDev()) {
-      console.group(`[Adminator] ${label}`);
+      console.group(`[SIE] ${label}`);
     }
   },
 
@@ -93,7 +93,7 @@ const Logger = {
    */
   time(label) {
     if (isDev()) {
-      console.time(`[Adminator] ${label}`);
+      console.time(`[SIE] ${label}`);
     }
   },
 
@@ -103,7 +103,7 @@ const Logger = {
    */
   timeEnd(label) {
     if (isDev()) {
-      console.timeEnd(`[Adminator] ${label}`);
+      console.timeEnd(`[SIE] ${label}`);
     }
   },
 

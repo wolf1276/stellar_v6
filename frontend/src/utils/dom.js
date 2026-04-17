@@ -1,5 +1,5 @@
 /**
- * Adminator DOM Utility Functions
+ * SIE DOM Utility Functions
  * Provides jQuery-like functionality using vanilla JavaScript
  *
  * @module utils/dom

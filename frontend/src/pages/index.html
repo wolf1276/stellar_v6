@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>SIE | Stellar Intent Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  </head>
+  <body class="sie-dashboard" data-theme="light">
+    <div id="loader"><div class="spinner"></div></div>
+
+    <!-- PERSISTENT SIDEBAR NAVIGATION -->
+    <aside class="sie-sidebar glass-panel">
+      <div class="sidebar-brand">
+        <div class="logo-mark">S</div>
+        <span class="logo-text fw-800">StellarEngine</span>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-btn active" data-view="dashboard">
+          <span class="icon">📊</span> Dashboard
+        </a>
+        <a href="#" class="nav-btn" data-view="engine">
+          <span class="icon">⚙️</span> Intent Engine
+        </a>
+        <a href="#" class="nav-btn" data-view="transactions">
+          <span class="icon">📜</span> Transactions
+        </a>
+        <a href="#" class="nav-btn border-top mt-auto" data-view="settings">
+          <span class="icon">🛠️</span> Settings
+        </a>
+      </nav>
+
+      <div class="wallet-box mt-4 p-3 glass-card text-center">
+        <div class="smaller text-muted mb-2">NETWORK STATUS</div>
+        <div id="walletStatus" class="small fw-700">Not connected</div>
+        <button id="connectWallet" class="btn btn-dark btn-sm w-100 mt-2 rounded-pill">Connect</button>
+      </div>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <main class="sie-content">
+      
+      <!-- 1. DASHBOARD VIEW -->
+      <div id="view-dashboard" class="content-view active">
+        <div class="view-header mb-4">
+          <h2 class="fw-800 m-0">Command Center</h2>
+          <p class="text-muted small">Real-time system oversight and analytics.</p>
+        </div>
+        
+        <div class="kpi-grid mb-4">
+          <div class="glass-card p-4">
+            <div class="smaller text-muted uppercase">Total Transactions</div>
+            <h2 class="fw-800 m-0" id="kpi-total-tx">0</h2>
+          </div>
+          <div class="glass-card p-4">
+            <div class="smaller text-muted uppercase">Total Volume (XLM)</div>
+            <h2 class="fw-800 m-0" id="kpi-total-volume">0.00</h2>
+          </div>
+          <div class="glass-card p-4">
+            <div class="smaller text-muted uppercase">System Confidence</div>
+            <h2 class="fw-800 m-0" id="kpi-confidence">98.4%</h2>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div class="glass-card p-4">
+              <h6 class="sie-section-label mb-4">Performance Over Time</h6>
+              <canvas id="main-chart" height="300"></canvas>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="glass-card p-4 h-100">
+              <h6 class="sie-section-label mb-4">Active Solver Breakdown</h6>
+              <div id="solverBreakdownList" class="d-flex flex-column gap-3">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. ENGINE VIEW -->
+      <div id="view-engine" class="content-view">
+        <div class="view-header mb-4">
+          <h2 class="fw-800 m-0">Intent Engine</h2>
+          <p class="text-muted small">The heart of Stellar multi-model reasoning.</p>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <div class="glass-card p-5">
+              <h6 class="sie-section-label mb-3">Describe Your Intent</h6>
+              <div class="intent-input-group p-4 bg-slate-50 rounded-4 mb-4">
+                <textarea id="intentInput" class="form-control border-0 bg-transparent p-0" placeholder="e.g. Swap 100 XLM into USDC for Alice..." rows="3"></textarea>
+              </div>
+              <button id="analyzeIntent" class="btn btn-primary btn-lg w-100 fw-700 py-3 rounded-pill">Process Strategy</button>
+              
+              <div id="engineState" class="mt-4 d-none">
+                <div class="alert alert-info border-0 rounded-4 smaller">
+                  <strong class="uppercase">Best Strategy:</strong> <span id="bestSolver">...</span>
+                </div>
+                <button id="signAndExecute" class="btn btn-success btn-lg w-100 fw-700 py-3 rounded-pill">Sign & Execute Payload</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="glass-card p-4 h-100 overflow-auto">
+              <h6 class="sie-section-label mb-4">Reasoning Chain</h6>
+              <div id="reasoningPanel" class="small text-muted fst-italic mb-4">Awaiting strategy generation...</div>
+              
+              <h6 class="sie-section-label mb-3">Model Consensus</h6>
+              <div id="modelConsensus" class="d-flex flex-column gap-2 mb-4">
+                <!-- Injected via JS -->
+              </div>
+
+              <h6 class="sie-section-label mb-3">Solver Outputs</h6>
+              <div class="table-responsive">
+                <table class="table table-clean table-sm smaller">
+                  <tbody id="comparisonTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. TRANSACTIONS VIEW -->
+      <div id="view-transactions" class="content-view">
+        <div class="view-header mb-4">
+          <h2 class="fw-800 m-0">Transaction Ledger</h2>
+          <p class="text-muted small">Full history of executed intelligence strategies.</p>
+        </div>
+        <div class="glass-card p-0 overflow-hidden">
+          <div class="table-responsive">
+            <table class="table table-clean align-middle m-0 p-4">
+              <thead>
+                <tr class="bg-slate-50">
+                  <th class="ps-4 py-3 smaller text-muted uppercase">Time</th>
+                  <th class="py-3 smaller text-muted uppercase">Intent Summary</th>
+                  <th class="py-3 smaller text-muted uppercase">Amount</th>
+                  <th class="py-3 smaller text-muted uppercase text-center">Status</th>
+                  <th class="pe-4 py-3 smaller text-muted uppercase text-end">Explorer</th>
+                </tr>
+              </thead>
+              <tbody id="transactionHistoryTable" class="small">
+                <!-- History injected here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. SETTINGS VIEW -->
+      <div id="view-settings" class="content-view">
+        <div class="view-header mb-4">
+          <h2 class="fw-800 m-0">Global Preferences</h2>
+          <p class="text-muted small">Configure engine parameters and behavior.</p>
+        </div>
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="glass-card p-4">
+              <h6 class="sie-section-label mb-4">Model Preferences</h6>
+              <div class="form-check form-switch mb-4">
+                <input class="form-check-input" type="checkbox" id="pref-gpt4" checked>
+                <label class="form-check-label ps-2" for="pref-gpt4">Enable GPT-4o Oversight</label>
+              </div>
+              <div class="form-check form-switch mb-4">
+                <input class="form-check-input" type="checkbox" id="pref-claude" checked>
+                <label class="form-check-label ps-2" for="pref-claude">Enable Claude 3.5 Sonnet</label>
+              </div>
+              <div class="form-check form-switch mb-4">
+                <input class="form-check-input" type="checkbox" id="pref-local" checked>
+                <label class="form-check-label ps-2" for="pref-local">Allow Local Llama 3 Backup</label>
+              </div>
+              
+              <h6 class="sie-section-label mb-4 mt-5">Network Environment</h6>
+              <select class="form-select bg-slate-100 border-0 rounded-3 p-3 mb-4">
+                <option selected>Stellar Testnet (Standard)</option>
+                <option>Stellar Mainnet (Requires Auth)</option>
+                <option>Local Mock Node</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- XDR PREVIEW OVERLAY -->
+    <div id="xdrOverlay" class="glass-overlay d-none">
+      <div class="glass-card p-4 max-w-600">
+        <h6 class="sie-section-label">Final XDR Payload</h6>
+        <pre id="xdrPreview" class="sie-xdr-preview-mini my-4"></pre>
+        <button class="btn btn-dark w-100 rounded-pill" onclick="document.getElementById('xdrOverlay').classList.add('d-none')">Confirm Close</button>
+      </div>
+    </div>
+  </body>
+</html>

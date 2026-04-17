@@ -5,16 +5,15 @@
 
 import ThemeManager from './utils/theme';
 import { DOM } from './utils/dom';
-
-// Import design systems
 import './styles/globals.scss';
 
 // Import unified dashboard logic
-import './dashboard/index.js';
+import DashboardManager from './dashboard/index.js';
 
 class AntigravityApp {
   constructor() {
     this.isInitialized = false;
+    this.currentView = 'dashboard';
 
     DOM.ready(() => {
       this.init();
@@ -26,8 +25,11 @@ class AntigravityApp {
 
     try {
       ThemeManager.init();
-      this.initThemeToggle();
+      this.initNavigation();
       this.isInitialized = true;
+      
+      // Init Dashboard Manager (handles charts, engine, etc.)
+      DashboardManager.init();
       
       this.hideLoader();
     } catch (error) {
@@ -36,17 +38,31 @@ class AntigravityApp {
     }
   }
 
-  initThemeToggle() {
-    const toggle = document.getElementById('themeToggle');
-    if (toggle) {
-      const current = ThemeManager.current();
-      toggle.checked = current === 'dark';
-      
-      toggle.addEventListener('change', () => {
-        const next = toggle.checked ? 'dark' : 'light';
-        ThemeManager.apply(next);
+  initNavigation() {
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const views = document.querySelectorAll('.content-view');
+
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const viewId = btn.getAttribute('data-view');
+        if (!viewId) return;
+
+        // Update Nav
+        navButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Update Views
+        views.forEach(v => v.classList.remove('active'));
+        const targetView = document.getElementById(`view-${viewId}`);
+        if (targetView) targetView.classList.add('active');
+
+        this.currentView = viewId;
+        
+        // Trigger view-specific re-renders if needed
+        if (viewId === 'dashboard') DashboardManager.updateCharts();
       });
-    }
+    });
   }
 
   hideLoader() {

@@ -1,5 +1,5 @@
 /**
- * Adminator Utilities Index
+ * SIE Utilities Index
  * Re-exports all utility modules for convenient importing
  *
  * @module utils

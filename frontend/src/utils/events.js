@@ -1,5 +1,5 @@
 /**
- * Adminator Event Utilities
+ * SIE Event Utilities
  * Provides efficient event handling with delegation and cleanup
  *
  * @module utils/events

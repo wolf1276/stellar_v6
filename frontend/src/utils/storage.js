@@ -1,5 +1,5 @@
 /**
- * Adminator Storage Utilities
+ * SIE Storage Utilities
  * Safe localStorage wrapper with error handling
  *
  * @module utils/storage

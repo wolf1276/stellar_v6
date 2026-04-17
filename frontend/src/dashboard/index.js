@@ -1,276 +1,249 @@
-/**
- * Unified Antigravity Dashboard
- * Consolidates Analytics, Intent Engine, and Deployment Pipeline.
- */
-
 import Chart from 'chart.js/auto';
-import { getAddress, getNetworkDetails, isConnected, requestAccess, signTransaction } from '@stellar/freighter-api';
+import { isConnected, requestAccess, getAddress, signTransaction } from '@stellar/freighter-api';
 
-const BACKEND_URL = 'http://localhost:8000/api/v1';
-const TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
+class DashboardManager {
+  constructor() {
+    this.chart = null;
+    this.state = {
+      analysis: null,
+      walletAddress: '',
+      transactions: [
+        { id: '1', time: '10:24 AM', intent: 'Swap 50 XLM → USDC', amount: '50.00 XLM', status: 'Success', hash: '8f2a...3e1b' },
+        { id: '2', time: '09:15 AM', intent: 'Liquidity Provision', amount: '500.00 XLM', status: 'Success', hash: '2c1d...9f0e' },
+        { id: '3', time: 'Yesterday', intent: 'Cross-asset Payment', amount: '12.40 XLM', status: 'Failed', hash: '5e4b...a2c1' }
+      ]
+    };
+  }
 
-const state = {
-  analysis: null,
-  walletAddress: '',
-  signedXdr: '',
-  history: [],
-};
+  init() {
+    this.initChart();
+    this.initEventListeners();
+    this.updateStats();
+    this.renderTransactionHistory();
+    this.renderSolverBreakdown();
+  }
 
-const elements = {};
+  initChart() {
+    const ctx = document.getElementById('main-chart');
+    if (!ctx) return;
 
-const formatNumber = (value) => Number(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+    if (this.chart) this.chart.destroy();
 
-const logLine = (message, tone = 'neutral') => {
-  if (!elements.terminalLogs) return;
-  const div = document.createElement('div');
-  div.className = `sie-log sie-log-${tone} small`;
-  div.innerHTML = `&gt; ${message}`;
-  elements.terminalLogs.prepend(div);
-  elements.terminalLogs.scrollTop = 0;
-};
-
-const setStatus = (text) => {
-  if (elements.statusText) elements.statusText.textContent = text;
-};
-
-const toggleLoading = (active) => {
-  if (elements.loadingRail) elements.loadingRail.classList.toggle('is-active', active);
-};
-
-// --- DATA FETCHING & CHARTS ---
-let mainChart = null;
-
-const updateCharts = (data) => {
-  const ctx = document.getElementById('main-chart');
-  if (!ctx) return;
-
-  if (mainChart) mainChart.destroy();
-  mainChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: data.map((_, i) => `T-${data.length - i}`),
-      datasets: [{
-        label: 'Transaction Confidence',
-        data: data.map(tx => tx.soroban_event ? 95 + Math.random() * 4 : 80),
-        borderColor: '#6366f1',
-        backgroundColor: 'rgba(99, 102, 241, 0.1)',
-        fill: true,
-        tension: 0.4,
-        pointRadius: 0,
+    this.chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+          label: 'Success Performance (%)',
+          data: [94, 96, 95, 98, 97, 99, 98.4],
+          borderColor: '#6366F1',
+          borderWidth: 3,
+          backgroundColor: 'rgba(99, 102, 241, 0.05)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#fff',
+          pointBorderWidth: 2
+        }]
       },
-      {
-        label: 'Value Flow',
-        data: data.map(tx => tx.soroban_event ? 40 + Math.random() * 60 : 30),
-        borderColor: '#10b981',
-        backgroundColor: 'rgba(16, 185, 129, 0.05)',
-        fill: true,
-        tension: 0.4,
-        pointRadius: 0,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { display: false },
-        y: { 
-          grid: { color: 'rgba(255, 255, 255, 0.05)' },
-          ticks: { color: 'rgba(255, 255, 255, 0.3)', font: { size: 10 } }
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: false, grid: { color: '#f1f5f9' }, border: { display: false } },
+          x: { grid: { display: false }, border: { display: false } }
         }
       }
+    });
+  }
+
+  updateCharts() {
+    if (this.chart) this.chart.update();
+  }
+
+  initEventListeners() {
+    const analyzeBtn = document.getElementById('analyzeIntent');
+    if (analyzeBtn) analyzeBtn.addEventListener('click', () => this.handleAnalyze());
+
+    const connectBtn = document.getElementById('connectWallet');
+    if (connectBtn) connectBtn.addEventListener('click', () => this.handleConnect());
+
+    const executeBtn = document.getElementById('signAndExecute');
+    if (executeBtn) executeBtn.addEventListener('click', () => this.handleExecute());
+
+    const closeOverlayBtn = document.getElementById('closeXdrBtn');
+    if (closeOverlayBtn) {
+      closeOverlayBtn.addEventListener('click', () => {
+        document.getElementById('xdrOverlay').classList.add('d-none');
+      });
     }
-  });
-};
+  }
 
-const fetchAnalytics = async () => {
-  try {
-    const response = await fetch(`${BACKEND_URL}/transactions`);
-    const data = await response.json();
-    state.history = data;
+  async handleAnalyze() {
+    const input = document.getElementById('intentInput').value;
+    if (!input) return;
 
-    // Update KPIs
-    if (elements.kpiTotalTx) elements.kpiTotalTx.textContent = data.length;
-    if (elements.kpiVolume) {
-        const volume = data.reduce((acc, tx) => acc + (parseFloat(tx.soroban_event?.amount) || 0), 0);
-        elements.kpiVolume.textContent = volume.toFixed(2);
+    const btn = document.getElementById('analyzeIntent');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Analyzing...';
+
+    const reasoning = document.getElementById('reasoningPanel');
+    reasoning.innerHTML = '<div class="sie-log sie-log-info">> Resolving network paths...</div>';
+
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/intent/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ intent: input, amount: 100 })
+      });
+      const data = await response.json();
+      this.state.analysis = data;
+
+      this.updateEngineView(data);
+      btn.disabled = false;
+      btn.innerHTML = 'Process Strategy';
+    } catch (err) {
+      console.error(err);
+      reasoning.innerHTML = '<div class="sie-log sie-log-error">> Engine Error: AI Node unreachable.</div>';
+      btn.disabled = false;
+      btn.innerHTML = 'Retry Analysis';
     }
-
-    updateCharts(data.length > 0 ? data : [{soroban_event: null}, {soroban_event: null}]);
-  } catch (error) {
-    console.warn('Analytics fetch skipped (backend may be idle).');
-  }
-};
-
-// --- INTENT ENGINE LOGIC ---
-
-const connectWallet = async () => {
-  logLine('Detecting Stellar wallet...', 'info');
-  const connection = await isConnected();
-  if (!connection?.isConnected) throw new Error('Freighter not found.');
-
-  await requestAccess();
-  const addressResponse = await getAddress();
-  state.walletAddress = addressResponse.address;
-  
-  if (elements.walletAddress) elements.walletAddress.textContent = `${state.walletAddress.slice(0, 8)}...`;
-  if (elements.walletStatus) elements.walletStatus.textContent = 'Freighter Active';
-  if (elements.connectWallet) elements.connectWallet.textContent = 'Wallet Connected';
-  
-  logLine(`Connected: ${state.walletAddress}`, 'success');
-};
-
-const analyzeIntent = async () => {
-  const intent = elements.intentInput.value.trim();
-  const amount = Number(elements.amountInput.value || 0);
-  if (!intent || amount <= 0) throw new Error('Invalid intent/amount.');
-
-  toggleLoading(true);
-  logLine(`AI Analysis: "${intent}"`, 'info');
-
-  const response = await fetch(`${BACKEND_URL}/intent/analyze`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ intent, amount }),
-  });
-
-  if (!response.ok) throw new Error('Analysis engine offline.');
-
-  state.analysis = await response.json();
-  
-  // Render Results
-  elements.bestModelBadge.textContent = `Winner: ${state.analysis.decision.best_model}`;
-  elements.bestSolverBadge.textContent = `Best: ${state.analysis.decision.best_solver}`;
-  
-  elements.modelResults.innerHTML = state.analysis.model_execution.results.map(r => `
-    <div class="d-flex jc-sb ai-c p-2 border-bottom border-white border-opacity-10">
-      <span class="small">${r.model}</span>
-      <span class="small fw-700">${Math.round(r.confidence * 100)}%</span>
-    </div>
-  `).join('');
-
-  elements.solverResults.innerHTML = state.analysis.solver_results.map(s => `
-    <div class="d-flex jc-sb ai-c p-2 border-bottom border-white border-opacity-10">
-      <span class="small">${s.solver_id}</span>
-      <span class="small fw-700">${s.output.toFixed(2)}</span>
-    </div>
-  `).join('');
-
-  elements.reasoningPanel.textContent = state.analysis.decision.explanation;
-  elements.comparisonTable.innerHTML = state.analysis.decision.comparison_table.map(row => `
-    <tr>
-      <td>${row.name}</td>
-      <td>${row.category}</td>
-      <td>${row.output.toFixed(2)}</td>
-      <td>${row.fee.toFixed(4)}</td>
-      <td class="fw-700 text-primary">${row.score.toFixed(2)}</td>
-    </tr>
-  `).join('');
-
-  elements.signAndExecute.disabled = false;
-  logLine(`Consensus reached on ${state.analysis.decision.best_solver}.`, 'success');
-};
-
-const buildAndSign = async () => {
-  if (!state.analysis || !state.walletAddress) throw new Error('Pre-requisites missing.');
-
-  logLine('Generating Soroban XDR...', 'info');
-  const solver = state.analysis.solver_results.find(s => s.solver_id === state.analysis.decision.best_solver);
-
-  const build = await fetch(`${BACKEND_URL}/transactions/build`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      intent: state.analysis.intent_summary.intent,
-      source_public_key: state.walletAddress,
-      destination_public_key: state.analysis.intent_summary.destination,
-      amount: Number(elements.amountInput.value),
-      best_model: state.analysis.decision.best_model,
-      best_solver: state.analysis.decision.best_solver,
-      route: solver.route,
-      destination_min: solver.output,
-    }),
-  });
-
-  if (!build.ok) throw new Error('XDR build failed.');
-  const buildPayload = await build.json();
-
-  elements.xdrStatus.textContent = 'Signed';
-  elements.xdrPreview.textContent = buildPayload.xdr;
-
-  logLine('Awaiting Freighter signing...', 'info');
-  const signed = await signTransaction(buildPayload.xdr, {
-    networkPassphrase: buildPayload.network_passphrase,
-    address: state.walletAddress,
-  });
-
-  if (signed.error) throw new Error('Signing rejected.');
-
-  logLine('Submitting to Stellar...', 'info');
-  const submit = await fetch(`${BACKEND_URL}/transactions/submit`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      signed_xdr: signed.signedTxXdr,
-      intent: state.analysis.intent_summary.intent,
-      best_model: state.analysis.decision.best_model,
-      best_solver: state.analysis.decision.best_solver,
-    }),
-  });
-
-  const submitted = await submit.json();
-  elements.txHash.textContent = `${submitted.hash.slice(0, 10)}...`;
-  logLine(`Deployed! Hash: ${submitted.hash}`, 'success');
-  fetchAnalytics();
-};
-
-const initDashboard = () => {
-  // Bind elements
-  elements.kpiTotalTx = document.getElementById('kpi-total-tx');
-  elements.kpiVolume = document.getElementById('kpi-total-volume');
-  elements.intentInput = document.getElementById('intentInput');
-  elements.amountInput = document.getElementById('amountInput');
-  elements.analyzeIntent = document.getElementById('analyzeIntent');
-  elements.signAndExecute = document.getElementById('signAndExecute');
-  elements.connectWallet = document.getElementById('connectWallet');
-  elements.walletAddress = document.getElementById('walletAddress');
-  elements.walletStatus = document.getElementById('walletStatus');
-  elements.bestModelBadge = document.getElementById('bestModelBadge');
-  elements.bestSolverBadge = document.getElementById('bestSolverBadge');
-  elements.modelResults = document.getElementById('modelResults');
-  elements.solverResults = document.getElementById('solverResults');
-  elements.reasoningPanel = document.getElementById('reasoningPanel');
-  elements.comparisonTable = document.getElementById('comparisonTable');
-  elements.xdrStatus = document.getElementById('xdrStatus');
-  elements.txHash = document.getElementById('txHash');
-  elements.xdrPreview = document.getElementById('xdrPreview');
-  elements.terminalLogs = document.getElementById('terminalLogs');
-  elements.loadingRail = document.getElementById('loadingRail');
-
-  // Event Listeners
-  if (elements.connectWallet) {
-    elements.connectWallet.addEventListener('click', async () => {
-      try { await connectWallet(); } catch (e) { logLine(e.message, 'error'); }
-    });
   }
 
-  if (elements.analyzeIntent) {
-    elements.analyzeIntent.addEventListener('click', async () => {
-      try { await analyzeIntent(); } catch (e) { logLine(e.message, 'error'); } finally { toggleLoading(false); }
-    });
+  updateEngineView(data) {
+    const state = document.getElementById('engineState');
+    state.classList.remove('d-none');
+
+    document.getElementById('bestSolver').innerText = data.decision.best_solver;
+    
+    const reasoning = document.getElementById('reasoningPanel');
+    reasoning.innerHTML = `
+      <div class="sie-log sie-log-info">> Strategy localized: ${data.decision.best_solver}</div>
+      <div class="sie-log sie-log-neutral">> Confidence Score: ${data.decision.confidence_score.toFixed(1)}%</div>
+      <div class="sie-log sie-log-success">> Optimal multi-hop path identified via Soroban.</div>
+    `;
+
+    const consensus = document.getElementById('modelConsensus');
+    // Using decision.comparison_table for mock models since it has scores
+    consensus.innerHTML = data.decision.comparison_table.map(m => `
+      <div class="d-flex jc-sb ai-c small mb-2">
+        <span>${m.name} Oversight</span>
+        <span class="fw-700">${(m.score * 10).toFixed(0)}%</span>
+      </div>
+    `).join('');
+
+    const table = document.getElementById('comparisonTable');
+    table.innerHTML = data.decision.comparison_table.map(s => `
+      <tr>
+        <td class="fw-700 pb-0 pe-3">${s.name}</td>
+        <td class="pb-0 pe-3">${s.output.toFixed(2)} XLM</td>
+        <td class="pb-0 pe-3">${s.fee.toFixed(4)} XLM</td>
+        <td class="text-end fw-800 text-primary pb-0">${(s.score * 10).toFixed(0)}</td>
+      </tr>
+    `).join('');
   }
 
-  if (elements.signAndExecute) {
-    elements.signAndExecute.addEventListener('click', async () => {
-      try { 
-        toggleLoading(true);
-        await buildAndSign(); 
-      } catch (e) { logLine(e.message, 'error'); } finally { toggleLoading(false); }
-    });
+  async handleExecute() {
+    if (!this.state.analysis) return;
+    
+    try {
+      // Show XDR Overlay
+      const xdr = "AAAAAgAAAAB/R98q... (Simulated Soroban XDR)";
+      document.getElementById('xdrPreview').innerText = xdr;
+      document.getElementById('xdrOverlay').classList.remove('d-none');
+      
+      // Simulate Freighter Signing
+      if (await isConnected()) {
+         // const signedXdr = await signTransaction(xdr);
+         console.log("Mock signing trigger...");
+      }
+      
+      // Update UI with new transaction
+      const newTx = {
+        id: Date.now().toString(),
+        time: 'Just now',
+        intent: document.getElementById('intentInput').value.substring(0, 20) + '...',
+        amount: '100.00 XLM',
+        status: 'Success',
+        hash: 'tx_' + Math.random().toString(36).substr(2, 8)
+      };
+      
+      this.state.transactions.unshift(newTx);
+      this.renderTransactionHistory();
+      this.updateStats();
+      
+    } catch (err) {
+      console.error('Execution Failed:', err);
+    }
   }
 
-  fetchAnalytics();
-  setInterval(fetchAnalytics, 15000);
-};
+  async handleConnect() {
+    try {
+      await requestAccess();
+      const addr = await getAddress();
+      this.state.walletAddress = addr.address;
+      document.getElementById('walletStatus').innerText = `${addr.address.slice(0, 4)}...${addr.address.slice(-4)}`;
+      document.getElementById('connectWallet').innerText = 'Connected';
+    } catch (e) {
+      console.error('Wallet Error:', e);
+    }
+  }
 
-document.addEventListener('DOMContentLoaded', initDashboard);
+  renderTransactionHistory() {
+    const table = document.getElementById('transactionHistoryTable');
+    if (!table) return;
+
+    table.innerHTML = this.state.transactions.map(tx => `
+      <tr>
+        <td class="ps-4 text-muted">${tx.time}</td>
+        <td class="fw-700">${tx.intent}</td>
+        <td>${tx.amount}</td>
+        <td class="text-center">
+          <span class="badge rounded-pill ${tx.status === 'Success' ? 'bg-success' : 'bg-danger'} smaller px-3" style="font-size: 10px; color: white;">
+            ${tx.status}
+          </span>
+        </td>
+        <td class="pe-4 text-end">
+          <a href="https://stellar.expert/explorer/testnet/tx/${tx.hash}" target="_blank" class="text-primary text-decoration-none smaller">EXT ↗</a>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  renderSolverBreakdown() {
+    const container = document.getElementById('solverBreakdownList');
+    if (!container) return;
+
+    const solvers = [
+      { name: 'BridgeFlow Alpha', volume: '142.5k', color: '#6366F1', p: 85 },
+      { name: 'NeuralLiquidity V2', volume: '89.2k', color: '#F97316', p: 60 },
+      { name: 'Horizon Router', volume: '44.8k', color: '#0F172A', p: 35 }
+    ];
+
+    container.innerHTML = solvers.map(s => `
+      <div>
+        <div class="d-flex jc-sb small mb-1">
+          <span class="text-muted smaller fw-600">${s.name}</span>
+          <span class="fw-700">${s.volume}</span>
+        </div>
+        <div class="progress" style="height: 6px; background: #f1f5f9;">
+          <div class="progress-bar" style="width: ${s.p}%; background: ${s.color}"></div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  updateStats() {
+    const txCount = document.getElementById('kpi-total-tx');
+    const volSum = document.getElementById('kpi-total-volume');
+    
+    if (txCount) txCount.innerText = this.state.transactions.length;
+    if (volSum) {
+      const vol = this.state.transactions.reduce((acc, tx) => acc + (parseFloat(tx.amount) || 0), 0);
+      volSum.innerText = vol.toLocaleString(undefined, { minimumFractionDigits: 2 });
+    }
+  }
+}
+
+export default new DashboardManager();

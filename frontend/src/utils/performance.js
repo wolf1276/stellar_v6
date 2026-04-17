@@ -1,5 +1,5 @@
 /**
- * Adminator Performance Utilities
+ * SIE Performance Utilities
  * Provides ResizeObserver, IntersectionObserver, and lazy loading utilities
  *
  * @module utils/performance
@@ -283,7 +283,7 @@ const Performance = {
     const end = performance.now();
 
     if (process.env.NODE_ENV === 'development') {
-      console.log(`[Adminator] ${label}: ${(end - start).toFixed(2)}ms`);
+      console.log(`[SIE] ${label}: ${(end - start).toFixed(2)}ms`);
     }
 
     return result;

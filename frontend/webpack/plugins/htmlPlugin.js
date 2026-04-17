@@ -4,7 +4,7 @@ const
   HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const titles = {
-  'index': 'SIE | Dashboard',
+  'index': 'SIE | Command Center',
 };
 
 let minify = {
@@ -28,7 +28,7 @@ if (manifest.MINIFY) {
 
 module.exports = [
   new HtmlWebpackPlugin({
-    template: path.join(manifest.paths.src, 'pages', 'dashboard.html'),
+    template: path.join(manifest.paths.src, 'pages', 'index.html'),
     path: manifest.paths.build,
     filename: 'index.html',
     inject: true,

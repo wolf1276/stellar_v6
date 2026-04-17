@@ -1,5 +1,5 @@
 /**
- * Adminator Sanitization Utilities
+ * SIE Sanitization Utilities
  * HTML and input sanitization for security
  *
  * @module utils/sanitize

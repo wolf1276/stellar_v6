@@ -1,5 +1,5 @@
 /**
- * Adminator Theme Manager
+ * SIE Theme Manager
  * Handles light/dark mode switching with localStorage persistence
  *
  * @module utils/theme
@@ -14,7 +14,7 @@
  * Theme.apply('dark');
  *
  * // Listen for theme changes
- * window.addEventListener('adminator:themeChanged', (e) => {
+ * window.addEventListener('sie:themeChanged', (e) => {
  *   console.log('New theme:', e.detail.theme);
  * });
  */
@@ -22,7 +22,7 @@
 /* global Chart */
 
 /** @constant {string} Storage key for theme preference */
-const THEME_KEY = 'adminator-theme';
+const THEME_KEY = 'sie-theme';
 
 /** @constant {string[]} Valid theme values */
 const VALID_THEMES = ['light', 'dark'];
@@ -72,7 +72,7 @@ const Theme = {
    * Updates Chart.js defaults if available
    *
    * @param {('light'|'dark')} theme - Theme to apply
-   * @fires adminator:themeChanged
+   * @fires sie:themeChanged
    * @returns {boolean} Success status
    *
    * @example
@@ -81,7 +81,7 @@ const Theme = {
   apply(theme) {
     // Validate theme
     if (!VALID_THEMES.includes(theme)) {
-      console.warn(`[Adminator] Invalid theme "${theme}". Using "light".`);
+      console.warn(`[SIE] Invalid theme "${theme}". Using "light".`);
       theme = 'light';
     }
 
@@ -135,7 +135,7 @@ const Theme = {
     }
 
     // Dispatch event for other components
-    window.dispatchEvent(new CustomEvent('adminator:themeChanged', {
+    window.dispatchEvent(new CustomEvent('sie:themeChanged', {
       detail: { theme },
     }));
 
