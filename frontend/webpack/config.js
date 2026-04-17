@@ -66,11 +66,6 @@ const optimization = {
         name: 'vendor-chartjs',
         priority: 30,
       },
-      fullcalendar: {
-        test: /[\\/]node_modules[\\/]@fullcalendar[\\/]/,
-        name: 'vendor-fullcalendar',
-        priority: 30,
-      },
       bootstrap: {
         test: /[\\/]node_modules[\\/]bootstrap[\\/]/,
         name: 'vendor-bootstrap',

@@ -17,32 +17,65 @@
                 <a class="sidebar-link td-n" href="index.html">
                   <div class="peers ai-c fxw-nw">
                     <div class="peer"><div class="logo-mark">S</div></div>
-                    <div class="peer peer-greed"><h5 class="lh-1 mB-0 logo-text">Stellar Intent Engine</h5></div>
+                    <div class="peer peer-greed"><h5 class="lh-1 mB-0 logo-text">Stellar Intent</h5></div>
                   </div>
                 </a>
               </div>
             </div>
           </div>
-
+          <!-- ### $Sidebar Menu ### -->
           <ul class="sidebar-menu scrollable pos-r">
-            <li class="nav-item active mT-30">
-              <a class="sidebar-link" href="intent-engine.html"><span class="icon-holder"><i class="ti-target"></i></span><span class="title">Intent Dashboard</span></a>
+            <li class="nav-item mT-30">
+              <a class="sidebar-link" href="index.html">
+                <span class="icon-holder">
+                  <i class="c-orange-500 ti-home"></i>
+                </span>
+                <span class="title">Dashboard</span>
+              </a>
             </li>
-            <li class="nav-item">
-              <a class="sidebar-link" href="#model-comparison"><span class="icon-holder"><i class="ti-panel"></i></span><span class="title">Model Arena</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="sidebar-link" href="#transaction-panel"><span class="icon-holder"><i class="ti-wallet"></i></span><span class="title">Execution Proof</span></a>
+            <li class="nav-item actived">
+              <a class='sidebar-link' href="intent-engine.html">
+                <span class="icon-holder">
+                  <i class="c-blue-500 ti-terminal"></i>
+                </span>
+                <span class="title">Intent Engine</span>
+              </a>
             </li>
           </ul>
         </div>
       </div>
 
+      <!-- #Main -->
       <div class="page-container">
+        <!-- ### $Topbar ### -->
         <div class="header navbar">
           <div class="header-container">
-            <ul class="nav-left"><li><span class="fw-700">AI + DeFi Intent Infrastructure</span></li></ul>
-            <ul class="nav-right"><li><button id="connectWallet" class="btn btn-outline-primary sie-wallet-button">Connect Freighter</button></li></ul>
+            <ul class="nav-left">
+              <li>
+                <a id='sidebar-toggle' class="sidebar-toggle" href="javascript:void(0);">
+                  <i class="ti-menu"></i>
+                </a>
+              </li>
+              <li><span class="fw-700 mL-20">AI + DeFi Intent Infrastructure</span></li>
+            </ul>
+            <ul class="nav-right">
+              <li>
+                <div class="theme-toggle mR-20">
+                    <div class="form-check form-switch mB-0">
+                        <label class="form-check-label mR-10" for="themeToggle">
+                            <i class="ti-sun"></i>
+                        </label>
+                        <input class="form-check-input" type="checkbox" id="themeToggle">
+                        <label class="form-check-label mL-10" for="themeToggle">
+                            <i class="ti-moon"></i>
+                        </label>
+                    </div>
+                </div>
+              </li>
+              <li>
+                <button id="connectWallet" class="btn btn-outline-primary mR-20 sie-wallet-button">Connect Freighter</button>
+              </li>
+            </ul>
           </div>
         </div>
 

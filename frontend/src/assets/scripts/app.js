@@ -21,15 +21,8 @@ import ChartComponent from './components/Chart';
 import '../styles/index.scss';
 
 // Import other modules that don't need immediate modernization
-import './fullcalendar';
 import './masonry';
-import './popover';
 import './scrollbar';
-import './search';
-import './skycons';
-import './vectorMaps';
-import './chat';
-import './email';
 import './googleMaps';
 import './ui';
 import './intentEngine';
@@ -56,7 +49,8 @@ class AdminatorApp {
     Logger.time('Adminator Init');
 
     try {
-      // Initialize core components
+      // Initialize core components — each is guarded so one failure
+      // doesn't block the rest of the page from loading.
       this.initSidebar();
       this.initCharts();
       this.initDataTables();
@@ -69,14 +63,6 @@ class AdminatorApp {
 
       this.isInitialized = true;
 
-      // Hide the loader if it exists
-      const loader = DOM.select('#loader');
-      if (loader) {
-        setTimeout(() => {
-          loader.classList.add('fadeOut');
-        }, 300);
-      }
-
       Logger.timeEnd('Adminator Init');
       Logger.info('Application initialized successfully');
 
@@ -85,6 +71,15 @@ class AdminatorApp {
 
     } catch (error) {
       Logger.error('Error initializing Adminator App', error);
+    } finally {
+      // ALWAYS hide the loader — even if a component above threw.
+      // Without this, any init error leaves the spinner visible forever.
+      const loader = DOM.select('#loader');
+      if (loader) {
+        setTimeout(() => {
+          loader.classList.add('fadeOut');
+        }, 300);
+      }
     }
   }
 

@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - SIE_SOROBAN_CONTRACT_ID=${SIE_SOROBAN_CONTRACT_ID:-}
+      - SIE_SUBMIT_TO_NETWORK=true
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "4000:4000"
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=development
+    restart: always

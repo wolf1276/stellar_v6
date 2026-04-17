@@ -1,14 +1,16 @@
-# Stellar Intent Engine
+# Stellar Intent Engine (SIE)
 
-Stellar Intent Engine (SIE) is a modular AI + blockchain web application that:
+Stellar Intent Engine is an advanced AI-powered transaction orchestrator for the Stellar Network. It analyzes natural language intents, evaluates multiple AI strategies in parallel, optimizes execution via specialized solvers, and submits verified proof-of-execution to a Soroban smart contract.
 
-- accepts a natural-language financial intent
-- runs multiple AI strategy generators in parallel
-- simulates Uniswap v4-style AMM execution and routing hooks
-- scores solver and model outcomes with a decision engine
-- builds unsigned Stellar XDR server-side
-- signs client-side with Freighter
-- records proof metadata for Soroban logging
+## 🚀 Key Features
+
+*   **Premium SaaS Dashboard**: Real-time analytics, KPI tracking, and AI reasoning visualization (`/dashboard.html`).
+*   **AI Consensus Engine**: Parallel evaluation using GPT, Claude, and Llama strategies.
+*   **Multi-Strategy Solvers**: Optimized for Fees, Output, Risk, and Hybrid pathing.
+*   **Soroban Proof Trail**: Persistent on-chain logging of intent metadata.
+*   **Wallet Integration**: Secure client-side signing via Freighter wallet.
+*   **Production-Ready**: Dockerized architecture with full CI/CD support.
+
 
 ## Project Structure
 
