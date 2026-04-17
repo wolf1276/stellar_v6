@@ -5,6 +5,7 @@
 
 // Import the modern application
 import './app.js';
+import './dashboard';
 
 // Legacy imports that haven't been modernized yet
 // These will be gradually replaced in future iterations

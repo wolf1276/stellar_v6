@@ -19,10 +19,10 @@
   --c-border: #e2e8f0;
   --c-border-light: #f1f5f9;
 
-  /* Refined brand colors - modern indigo */
-  --c-primary: #6366f1;
-  --c-primary-light: #818cf8;
-  --c-primary-dark: #4f46e5;
+  /* Refined brand colors - orange accent based on reference dashboard */
+  --c-primary: #ff6849;
+  --c-primary-light: #ff8e76;
+  --c-primary-dark: #e55a3d;
   --c-success: #10b981;
   --c-warning: #f59e0b;
   --c-danger: #ef4444;

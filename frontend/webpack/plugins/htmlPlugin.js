@@ -23,6 +23,7 @@ const titles = {
   '500': '500',
   'basic-table': 'Basic Table',
   'intent-engine': 'Intent Engine',
+  'dashboard': 'Dashboard',
 };
 
 let minify = {
