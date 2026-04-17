@@ -17,7 +17,16 @@ def parse_intent(request: IntentRequest) -> dict[str, str | float | int | list[s
         request.destination_asset.upper(),
     ]
     amount_match = AMOUNT_PATTERN.search(request.intent)
-    amount = float(amount_match.group(1)) if amount_match else request.amount
+    if amount_match:
+        amount = float(amount_match.group(1))
+    else:
+        # Fallback to request.amount if no amount in string, 
+        # but if request.amount is the default 100.0 and string has no numbers, 
+        # it might be unintentional. For now, we prefer explicit override.
+        amount = request.amount
+    
+    if amount <= 0:
+        raise ValueError("Intent must specify a positive amount (e.g., '100 XLM').")
     destination = request.destination or settings.default_destination
     urgency = "high" if any(word in request.intent.lower() for word in ["now", "fast", "urgent"]) else "normal"
 

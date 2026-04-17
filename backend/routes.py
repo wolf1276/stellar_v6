@@ -23,17 +23,22 @@ transaction_history: list[SubmitTransactionResponse] = []
 
 @router.post("/intent/analyze", response_model=AnalyzeIntentResponse)
 async def analyze_intent(request: IntentRequest) -> AnalyzeIntentResponse:
-    summary = parse_intent(request)
-    model_execution = await run_models(summary)
-    best_model = next(model for model in model_execution.results if model.model == model_execution.best_model)
-    solver_results = run_solvers(summary, best_model)
-    decision = pick_best(model_execution.results, solver_results)
-    return AnalyzeIntentResponse(
-        intent_summary=summary,
-        model_execution=model_execution,
-        solver_results=solver_results,
-        decision=decision,
-    )
+    try:
+        summary = parse_intent(request)
+        model_execution = await run_models(summary)
+        best_model = next(model for model in model_execution.results if model.model == model_execution.best_model)
+        solver_results = run_solvers(summary, best_model)
+        decision = pick_best(model_execution.results, solver_results)
+        return AnalyzeIntentResponse(
+            intent_summary=summary,
+            model_execution=model_execution,
+            solver_results=solver_results,
+            decision=decision,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Internal engine error: {str(exc)}") from exc
 
 
 @router.post("/transactions/build", response_model=BuildTransactionResponse)

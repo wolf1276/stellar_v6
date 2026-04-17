@@ -69,6 +69,14 @@ class AdminatorApp {
 
       this.isInitialized = true;
 
+      // Hide the loader if it exists
+      const loader = DOM.select('#loader');
+      if (loader) {
+        setTimeout(() => {
+          loader.classList.add('fadeOut');
+        }, 300);
+      }
+
       Logger.timeEnd('Adminator Init');
       Logger.info('Application initialized successfully');
 
