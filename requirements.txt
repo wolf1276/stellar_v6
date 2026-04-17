@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+stellar-sdk
+pydantic
+requests
+typer
+rich
+httpx
+pytest

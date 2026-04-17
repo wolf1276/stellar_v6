@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>SIE | Stellar Intent Engine</title>
+  </head>
+  <body class="app">
+    <div id="loader"><div class="spinner"></div></div>
+
+    <div class="peers ai-s fxw-nw h-100vh">
+      <div class="sidebar">
+        <div class="sidebar-inner">
+          <div class="sidebar-logo">
+            <div class="peers ai-c fxw-nw">
+              <div class="peer peer-greed">
+                <a class="sidebar-link td-n" href="index.html">
+                  <div class="peers ai-c fxw-nw">
+                    <div class="peer"><div class="logo-mark">S</div></div>
+                    <div class="peer peer-greed"><h5 class="lh-1 mB-0 logo-text">Stellar Intent Engine</h5></div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <ul class="sidebar-menu scrollable pos-r">
+            <li class="nav-item active mT-30">
+              <a class="sidebar-link" href="intent-engine.html"><span class="icon-holder"><i class="ti-target"></i></span><span class="title">Intent Dashboard</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="sidebar-link" href="#model-comparison"><span class="icon-holder"><i class="ti-panel"></i></span><span class="title">Model Arena</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="sidebar-link" href="#transaction-panel"><span class="icon-holder"><i class="ti-wallet"></i></span><span class="title">Execution Proof</span></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="page-container">
+        <div class="header navbar">
+          <div class="header-container">
+            <ul class="nav-left"><li><span class="fw-700">AI + DeFi Intent Infrastructure</span></li></ul>
+            <ul class="nav-right"><li><button id="connectWallet" class="btn btn-outline-primary sie-wallet-button">Connect Freighter</button></li></ul>
+          </div>
+        </div>
+
+        <main class="main-content bgc-grey-100">
+          <div class="sie-shell" data-intent-engine>
+            <section class="sie-hero">
+              <div>
+                <p class="sie-kicker">Production-grade route intelligence</p>
+                <h1 class="sie-title">Intent execution across AI models, liquidity solvers, and Stellar rails.</h1>
+                <p class="sie-subtitle">Generate competing strategies, simulate AMM execution, build unsigned XDR, sign with Freighter, and surface on-chain proof.</p>
+              </div>
+              <div class="sie-status-card">
+                <div class="sie-status-label">System state</div>
+                <div class="sie-status-value" id="statusText">Idle. Waiting for intent.</div>
+                <div class="sie-status-meta" id="walletStatus">Wallet not connected</div>
+              </div>
+            </section>
+
+            <section class="row gap-20">
+              <div class="col-12">
+                <div class="bgc-white bd bdrs-3 p-30 sie-card">
+                  <div class="d-flex flex-column gap-10">
+                    <div>
+                      <p class="sie-section-label">Intent Dashboard</p>
+                      <h3 class="mB-10">Describe the financial outcome you want.</h3>
+                    </div>
+                    <div class="row g-3">
+                      <div class="col-lg-8">
+                        <textarea id="intentInput" class="form-control sie-intent-input" rows="4">Swap 100 XLM into USDC for Alice with low risk and strong output.</textarea>
+                      </div>
+                      <div class="col-lg-4">
+                        <div class="sie-side-form">
+                          <label class="form-label" for="destinationInput">Destination account</label>
+                          <input id="destinationInput" class="form-control" type="text" placeholder="G..." />
+                          <label class="form-label mT-15" for="amountInput">Amount</label>
+                          <input id="amountInput" class="form-control" type="number" value="100" min="0.000001" step="0.000001" />
+                          <button id="analyzeIntent" class="btn btn-primary btn-lg w-100 mT-20">Run Intent Engine</button>
+                          <button id="signAndExecute" class="btn btn-success btn-lg w-100 mT-10" disabled>Sign and Execute</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="sie-loading-rail" id="loadingRail">
+                      <span>Running models…</span>
+                      <span>Simulating liquidity…</span>
+                      <span>Optimizing…</span>
+                      <span>Awaiting wallet signature…</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-6" id="model-comparison">
+                <div class="bgc-white bd bdrs-3 p-25 sie-card">
+                  <div class="d-flex jc-sb ai-c mB-15">
+                    <div><p class="sie-section-label">Model Comparison Panel</p><h4 class="mB-0">Competing AI strategies</h4></div>
+                    <span id="bestModelBadge" class="badge text-bg-primary">No winner yet</span>
+                  </div>
+                  <div id="modelResults" class="sie-grid-list"></div>
+                </div>
+              </div>
+
+              <div class="col-lg-6">
+                <div class="bgc-white bd bdrs-3 p-25 sie-card">
+                  <div class="d-flex jc-sb ai-c mB-15">
+                    <div><p class="sie-section-label">Solver Comparison Panel</p><h4 class="mB-0">Uniswap v4-style simulation results</h4></div>
+                    <span id="bestSolverBadge" class="badge text-bg-success">No winner yet</span>
+                  </div>
+                  <div id="solverResults" class="sie-grid-list"></div>
+                </div>
+              </div>
+
+              <div class="col-lg-7">
+                <div class="bgc-white bd bdrs-3 p-25 sie-card">
+                  <p class="sie-section-label">AI Reasoning Panel</p>
+                  <h4 class="mB-15">Selection rationale and scoring proof</h4>
+                  <div id="reasoningPanel" class="sie-reasoning">Intent reasoning will appear here after analysis.</div>
+                  <div class="table-responsive mT-20">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr><th>Name</th><th>Category</th><th>Output</th><th>Fee</th><th>Risk</th><th>Score</th></tr>
+                      </thead>
+                      <tbody id="comparisonTable"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-5" id="transaction-panel">
+                <div class="bgc-white bd bdrs-3 p-25 sie-card">
+                  <p class="sie-section-label">Transaction Panel</p>
+                  <h4 class="mB-15">Wallet, XDR, and execution proof</h4>
+                  <dl class="row sie-detail-list">
+                    <dt class="col-5">Wallet</dt><dd class="col-7" id="walletAddress">Not connected</dd>
+                    <dt class="col-5">Unsigned XDR</dt><dd class="col-7" id="xdrStatus">Not built</dd>
+                    <dt class="col-5">Transaction Hash</dt><dd class="col-7" id="txHash">Pending</dd>
+                    <dt class="col-5">Soroban Proof</dt><dd class="col-7" id="sorobanProof">Awaiting execution</dd>
+                  </dl>
+                  <pre id="xdrPreview" class="sie-xdr-preview">No transaction generated yet.</pre>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="bgc-white bd bdrs-3 p-25 sie-card">
+                  <p class="sie-section-label">Execution Log</p>
+                  <h4 class="mB-15">Event timeline</h4>
+                  <div id="terminalLogs" class="sie-terminal">
+                    <div>&gt; System initialized.</div>
+                    <div>&gt; Waiting for intent.</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
