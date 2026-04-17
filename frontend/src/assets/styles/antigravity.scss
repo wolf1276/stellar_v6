@@ -1,0 +1,157 @@
+// Antigravity UI System - Liquid Glass & Motion Hierarchy
+// Focus on depth, transparency, and performance
+
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  --glass-blur: blur(20px);
+  --motion-lift: translateY(-6px);
+  --motion-scale: scale(1.02);
+  --transition-smooth: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+[data-theme="dark"] {
+  --glass-bg: rgba(15, 23, 42, 0.3);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+}
+
+// 1. Structural Utilities
+.sie-dashboard {
+  min-height: 100vh;
+  padding: 80px 20px 40px;
+  background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.1), transparent),
+              radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05), transparent);
+}
+
+// 2. Glass Base Component
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--glass-shadow);
+  transition: var(--transition-smooth);
+  overflow: hidden;
+
+  &:hover {
+    transform: var(--motion-lift) var(--motion-scale);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 60px 0 rgba(0, 0, 0, 0.3);
+  }
+}
+
+// 3. Topbar (Floating Glass)
+.header.glass-strip {
+  position: fixed;
+  top: 15px;
+  left: 20px;
+  right: 20px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 40px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 25px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+// 4. KPI System
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.kpi-card {
+  padding: 24px;
+  text-align: center;
+  
+  .kpi-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--c-text-muted);
+    margin-bottom: 8px;
+  }
+  
+  .kpi-value {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 0;
+    background: linear-gradient(135deg, var(--c-primary), #a5b4fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+// 5. Analytics Panel
+.analytics-panel {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+// 6. Engine System (AI + Solver)
+.engine-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+// 7. Intent Input (Visual Hero)
+.intent-glass-input {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
+  color: white;
+  border-radius: 12px;
+  padding: 15px;
+  font-size: 16px;
+  width: 100%;
+  margin-bottom: 15px;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--c-primary);
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
+
+// 8. Visual Hierarchies
+.sie-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  backdrop-filter: brightness(1.2);
+}
+
+.is-best {
+  border: 1.5px solid var(--c-primary) !important;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(99, 102, 241, 0.05)) !important;
+}
+
+// Performance: Layer isolation
+.glass-card {
+  will-change: transform, box-shadow;
+}
+
+@media (max-width: 991px) {
+  .analytics-panel {
+    grid-template-columns: 1fr;
+  }
+  .kpi-row {
+    grid-template-columns: 1fr;
+  }
+}

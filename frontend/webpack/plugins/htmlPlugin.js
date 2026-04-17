@@ -5,9 +5,6 @@ const
 
 const titles = {
   'index': 'SIE | Dashboard',
-  'intent-engine': 'SIE | Intent Engine',
-  '404': 'SIE | Error 404',
-  '500': 'SIE | Error 500',
 };
 
 let minify = {

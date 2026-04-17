@@ -3,200 +3,89 @@
 @use "bootstrap/scss/bootstrap" as *;
 @use 'spec/index' as *;
 @use 'vendor/index' as *;
+@import "antigravity.scss";
 @import "utils/theme.css";
 @import "utils/mobile.scss";
 
 body {
   background: var(--c-bkg-body);
   color: var(--c-text-base);
+  margin: 0;
+  overflow-x: hidden;
 }
 
-.sidebar {
-  background: var(--c-bkg-sidebar);
+// Unified Antigravity Dashboard Core
+.container-fluid.max-w-1400 {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.bgc-white {
-  background: var(--c-bkg-card) !important;
+.sie-section-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--c-primary);
+  font-weight: 700;
+  opacity: 0.8;
 }
 
-// Dark-mode aware Header & Dropdown --------------------------------
-.header {
-  background: var(--c-bkg-card);
-  border-bottom: 1px solid var(--c-border);
+.sie-grid-list-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-  .dropdown-menu {
-    background: var(--c-bkg-card);
-    border: 1px solid var(--c-border);
+.sie-loading-rail {
+  display: flex;
+  gap: 20px;
+  overflow: hidden;
+  height: 0;
+  transition: all 0.5s ease;
+  opacity: 0;
+  
+  &.is-active {
+    height: 30px;
+    opacity: 1;
+    margin-top: 15px;
   }
-
-  .nav-left > li > a,
-  .nav-right > li > a {
-    color: var(--c-text-base);
-
-    &:hover,
-    &:focus {
-      color: var(--c-primary);
-    }
-  }
-
-  .notifications .counter {
-    background: var(--c-danger);
-    color: #fff;
-  }
-
-  // Theme toggle switch styling
-  .theme-toggle {
-    display: flex;
-    align-items: center;
-    height: 65px; // Match header height
-    padding: 0 15px;
-
-    .form-check {
-      margin: 0;
-      
-      .form-check-label {
-        color: var(--c-text-muted);
-        font-size: 11px;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        
-        i {
-          font-size: 12px;
-        }
-      }
-
-      .form-check-input {
-        width: 2.5rem;
-        height: 1.25rem;
-        background-color: var(--c-border);
-        border: 1px solid var(--c-border);
-        cursor: pointer;
-        
-        &:checked {
-          background-color: var(--c-primary);
-          border-color: var(--c-primary);
-        }
-
-        &:focus {
-          box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--c-primary) 25%, transparent);
-          border-color: var(--c-primary);
-        }
-      }
-    }
-
-    // Mobile theme toggle adjustments
-    @media (max-width: 991px) {
-      padding: 0 6px;
-      height: 65px;
-
-      .form-check {
-        .form-check-label {
-          font-size: 10px;
-          
-          &:first-child {
-            margin-right: 4px;
-          }
-          
-          &:last-child {
-            margin-left: 4px;
-          }
-        }
-
-        .form-check-input {
-          width: 2rem;
-          height: 1rem;
-        }
-      }
-    }
-
-    // Very small mobile adjustments
-    @media (max-width: 480px) {
-      padding: 0 4px;
-
-      .form-check {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        
-        .form-check-label {
-          font-size: 8px;
-          margin: 1px 0;
-          white-space: nowrap;
-          
-          i {
-            margin: 0 2px;
-          }
-        }
-
-        .form-check-input {
-          width: 1.5rem;
-          height: 0.8rem;
-          margin: 2px 0;
-        }
-      }
-    }
+  
+  span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--c-primary);
+    animation: sie-pulse 2s infinite ease-in-out;
+    
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
   }
 }
 
-// Mobile dropdown menu improvements
-@media (max-width: 767px) {
-  .header {
-    .nav-right {
-      .dropdown-menu {
-        position: fixed !important;
-        top: 65px !important;
-        left: 5px !important;
-        right: 5px !important;
-        width: auto !important;
-        max-width: none !important;
-        min-width: auto !important;
-        transform: none !important;
-        z-index: 1050;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        max-height: calc(100vh - 85px);
-        overflow-y: auto;
-      }
-
-      .notifications .dropdown-menu {
-        max-height: calc(100vh - 85px);
-        overflow-y: auto;
-      }
-    }
-  }
+@keyframes sie-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1); }
 }
 
-// Mobile search input overlay
-@media (max-width: 480px) {
-  .header {
-    .search-input {
-      &.active {
-        position: absolute;
-        top: 65px;
-        left: 0;
-        right: 0;
-        background: var(--c-bkg-card);
-        border-top: 1px solid var(--c-border);
-        padding: 10px;
-        z-index: 999;
+.sie-terminal-mini {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  padding: 12px;
+  height: 150px;
+  overflow-y: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #a5b4fc;
+}
 
-        input {
-          margin-top: 0;
-          width: 100%;
-          padding: 10px;
-          border: 1px solid var(--c-border);
-          border-radius: 4px;
-          background: var(--c-bkg-card);
-          color: var(--c-text-base);
-
-          &::placeholder {
-            color: var(--c-text-muted);
-          }
-        }
-      }
-    }
-  }
+.sie-xdr-preview-mini {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed var(--glass-border);
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 10px;
+  word-break: break-all;
+  white-space: pre-wrap;
+  max-height: 100px;
+  overflow-y: auto;
 }
 
 // Tables -------------------------------------------------
