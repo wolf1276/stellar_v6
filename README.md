@@ -4,25 +4,30 @@ Stellar Intent Engine is an advanced AI-powered transaction orchestrator for the
 
 ## 🚀 Key Features
 
-*   **Premium SaaS Dashboard**: Real-time analytics, KPI tracking, and AI reasoning visualization (`/dashboard.html`).
+*   **Premium SaaS Dashboard**: Real-time analytics, KPI tracking, and AI reasoning visualization (`/index.html`).
 *   **AI Consensus Engine**: Parallel evaluation using GPT, Claude, and Llama strategies.
 *   **Multi-Strategy Solvers**: Optimized for Fees, Output, Risk, and Hybrid pathing.
 *   **Soroban Proof Trail**: Persistent on-chain logging of intent metadata.
 *   **Wallet Integration**: Secure client-side signing via Freighter wallet.
 *   **Production-Ready**: Dockerized architecture with full CI/CD support.
 
-
 ## Project Structure
 
 - `backend/` FastAPI API for intent analysis, solver simulation, decisioning, and XDR handling
 - `frontend/` Adminator-based fintech dashboard with Freighter integration
 - `contracts/` Soroban contract, tests, and deployment notes
-- `cli/` legacy CLI entrypoint
+
+## 👷 CI/CD (GitHub Actions)
+
+The project includes a comprehensive CI pipeline:
+- **Linting**: Automated Python (Ruff), JavaScript (ESLint), and SCSS (Stylelint) checks.
+- **Testing**: Parallel execution of Backend (pytest) and Contract (cargo test) suites.
+- **Build Validation**: Ensures frontend assets and contract WASM compile correctly.
+- **Docker Verification**: Validates the `docker-compose` stack on every push.
 
 ## Backend
 
 Key modules:
-
 - [backend/ai_engine.py](/Users/ahir/Projects/stellar_lv6-master/backend/ai_engine.py)
 - [backend/solver_engine.py](/Users/ahir/Projects/stellar_lv6-master/backend/solver_engine.py)
 - [backend/decision_engine.py](/Users/ahir/Projects/stellar_lv6-master/backend/decision_engine.py)
@@ -30,7 +35,6 @@ Key modules:
 - [backend/routes.py](/Users/ahir/Projects/stellar_lv6-master/backend/routes.py)
 
 API flow:
-
 1. `POST /api/v1/intent/analyze`
 2. `POST /api/v1/transactions/build`
 3. Freighter signs the returned XDR in the browser
@@ -39,86 +43,58 @@ API flow:
 ## Frontend
 
 Main intent dashboard assets:
-
-- [frontend/src/intent-engine.html](/Users/ahir/Projects/stellar_lv6-master/frontend/src/intent-engine.html)
+- [frontend/src/index.html](/Users/ahir/Projects/stellar_lv6-master/frontend/src/index.html) (Primary Dashboard)
+- [frontend/src/intent-engine.html](/Users/ahir/Projects/stellar_lv6-master/frontend/src/intent-engine.html) (Execution Engine)
 - [frontend/src/assets/scripts/intentEngine/index.js](/Users/ahir/Projects/stellar_lv6-master/frontend/src/assets/scripts/intentEngine/index.js)
-- [frontend/src/assets/styles/spec/screens/intent-engine.scss](/Users/ahir/Projects/stellar_lv6-master/frontend/src/assets/styles/spec/screens/intent-engine.scss)
-
-## Soroban Contract
-
-Contract source:
-
-- [contracts/intent_engine.rs](/Users/ahir/Projects/stellar_lv6-master/contracts/intent_engine.rs)
-
-Build and deploy notes:
-
-- [contracts/README.md](/Users/ahir/Projects/stellar_lv6-master/contracts/README.md)
 
 ## Run Locally
 
 ### 1. Python environment
-
 ```bash
-cd /Users/ahir/Projects/stellar_lv6-master
 python3 -m venv .venv
-. .venv/bin/activate
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
 ### 2. Start the backend
-
 ```bash
-cd /Users/ahir/Projects/stellar_lv6-master
-. .venv/bin/activate
-python -m uvicorn backend.main:app --reload --port 8000
+uvicorn backend.main:app --reload --port 8000
 ```
 
 ### 3. Start the frontend
-
 ```bash
-cd /Users/ahir/Projects/stellar_lv6-master/frontend
+cd frontend
 npm install
 npm start
 ```
 
-Open [intent-engine.html](http://localhost:4000/intent-engine.html).
-
-### 4. Contract tests
-
-```bash
-cd /Users/ahir/Projects/stellar_lv6-master/contracts
-cargo test
-```
+Open [index.html](http://localhost:4000/index.html) for the dashboard.
 
 ## Validation
 
 Backend:
-
 ```bash
-cd /Users/ahir/Projects/stellar_lv6-master
-. .venv/bin/activate
-pytest backend/tests -q
+pytest
 ```
 
 Frontend:
-
 ```bash
-cd /Users/ahir/Projects/stellar_lv6-master/frontend
-npm run test:run
+cd frontend
 npm run lint:js
 npm run lint:scss
 npm run build
 ```
 
 Contract:
-
 ```bash
-cd /Users/ahir/Projects/stellar_lv6-master/contracts
+cd contracts
 cargo test
 ```
 
-## Notes
+## Docker Stack
+To run the full production-ready stack:
+```bash
+docker-compose up --build
+```
+Note: Ensure Docker Desktop is running on your machine.
 
-- The backend never signs transactions or stores private keys.
-- Transaction submission is intentionally mock-safe by default. Set `SIE_SUBMIT_TO_NETWORK=true` only after wiring live Horizon submission and funded testnet accounts.
-- The AI layer is deterministic and demo-safe today, but the architecture is async and ready for live provider adapters.

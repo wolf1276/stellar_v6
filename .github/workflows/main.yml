@@ -7,43 +7,95 @@ on:
     branches: [ main, master ]
 
 jobs:
-  backend-tests:
+  lint:
+    name: Linting (Python, JS, SCSS)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      - name: Run Python tests
-        run: |
-          pytest
 
-  frontend-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+      - name: Lint Python with Ruff
+        run: |
+          pip install ruff
+          ruff check .
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
+
+      - name: Install JS/SCSS dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Lint JavaScript
+        working-directory: ./frontend
+        run: npx eslint . --max-warnings 0
+
+      - name: Lint SCSS
+        working-directory: ./frontend
+        run: npx stylelint "**/*.scss"
+
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Python tests
+        run: |
+          pytest --maxfail=2 --durations=5
+
+  frontend-build:
+    name: Frontend Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
       - name: Install dependencies
         working-directory: ./frontend
         run: npm install
+
       - name: Build frontend
         working-directory: ./frontend
         run: npm run build
 
+      - name: Upload Frontend Assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+
   contract-checks:
+    name: Contract Verification
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -51,9 +103,42 @@ jobs:
           toolchain: stable
           target: wasm32-unknown-unknown
           override: true
+
+      - name: Rust Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            contracts/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Run contract tests
         working-directory: ./contracts
         run: cargo test
+
       - name: Build contract WASM
         working-directory: ./contracts
         run: cargo build --target wasm32-unknown-unknown --release
+
+      - name: Upload Contract WASM
+        uses: actions/upload-artifact@v4
+        with:
+          name: intent-engine-wasm
+          path: contracts/target/wasm32-unknown-unknown/release/stellar_intent_engine.wasm
+
+  docker-validate:
+    name: Docker Stack Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Validate Docker Compose
+        run: docker compose config
+
+      - name: Build Stack
+        run: docker compose build
+
